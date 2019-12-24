@@ -24,6 +24,11 @@ public func getWifiSsid() -> String? {
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
+        BluFiManager.shared.delegate = self
+        
+        print("\(getWifiSsid() ?? "n/a")")
+        
         // Override point for customization after application launch.
         return true
     }
@@ -42,6 +47,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
 
+}
 
+extension AppDelegate: BluFiManagerDelegate {
+    func didStopScanning(_ manager: BluFiManager) {
+        print("didStopScanning")
+    }
+    
+    func didConnect(_ manager: BluFiManager) {
+        print("didConnect")
+    }
+    
+    func didDisconnect(_ manager: BluFiManager) {
+        print("didDisconnect")
+    }
+    
+    func didUpdate(_ manager: BluFiManager, status: String?) {
+        print("didUpdate: \(status ?? "n/a")")
+    }
+    
+    func didReceiveWifi(_ manager: BluFiManager, list: [WifiEntry]) {
+        print("didReceive: \(list)")
+    }
 }
 
