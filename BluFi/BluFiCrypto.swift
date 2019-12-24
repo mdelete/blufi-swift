@@ -82,11 +82,11 @@ class DH {
 public class CRC {
     
     public static func crc16(_ data: [UInt8]) -> [UInt8] {
-        let crc = Update(crc: 0xFFFF, data: data, table: makeTable())
+        let crc = update(crc: 0xFFFF, data: data, table: makeTable())
         return [UInt8](crc ^ 0xFFFF)
     }
     
-    internal static func Update(crc: UInt16, data: [UInt8], table: [UInt16]) -> UInt16 {
+    internal static func update(crc: UInt16, data: [UInt8], table: [UInt16]) -> UInt16 {
         var crcRet = crc
         let skippedLeadingBytes = Array(data[2..<data.count]) // FIXME: orignal protocol skips the two leading bytes, this is a bad place to do this
         for d in skippedLeadingBytes {

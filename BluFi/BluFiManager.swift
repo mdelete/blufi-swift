@@ -55,24 +55,30 @@ extension Array where Iterator.Element == UInt8 {
     
 }
 
-// MARK: BluFi Error
+// MARK: BluFi Structs
 
-struct BluFiError: Error {
+public struct BluFiError: Error {
 
-    var code = 0
-    var msg = ""
-
-    public init(_ msg: String) {
-        self.msg = msg
+    public var state : UInt8
+    
+    enum State : Int8 {
+        case ESP_BLUFI_SEQUENCE_ERROR = 0
+        case ESP_BLUFI_CHECKSUM_ERROR
+        case ESP_BLUFI_DECRYPT_ERROR
+        case ESP_BLUFI_ENCRYPT_ERROR
+        case ESP_BLUFI_INIT_SECURITY_ERROR
+        case ESP_BLUFI_DH_MALLOC_ERROR
+        case ESP_BLUFI_DH_PARAM_ERROR
+        case ESP_BLUFI_READ_PARAM_ERROR
     }
 
-    public init(_ code: Int) {
-        self.code = code
+    public init(_ state: UInt8) {
+        self.state = state
     }
 
 }
 
-public struct WifiEntry {
+public struct BluFiWifi {
 
     public var ssid: String
     public var rssi: Int8
@@ -83,6 +89,19 @@ public struct WifiEntry {
     }
 }
 
+public struct BluFiDeviceInfo {
+    
+    public var opmode: UInt8
+    public var sta: UInt8
+    public var softap: UInt8
+    
+    public init(_ payload: [UInt8]) {
+        self.opmode = payload[0]
+        self.sta = payload[1]
+        self.softap = payload[2]
+    }
+}
+
 // MARK: BluFi Delegate Protocol
 
 public protocol BluFiManagerDelegate: NSObjectProtocol {
@@ -90,7 +109,9 @@ public protocol BluFiManagerDelegate: NSObjectProtocol {
     func didConnect(_ manager: BluFiManager)
     func didDisconnect(_ manager: BluFiManager)
     func didUpdate(_ manager: BluFiManager, status: String?)
-    func didReceiveWifi(_ manager: BluFiManager, list: [WifiEntry])
+    func didReceive(_ manager: BluFiManager, error: BluFiError)
+    func didReceive(_ manager: BluFiManager, wifi: [BluFiWifi])
+    func didReceive(_ manager: BluFiManager, deviceInfo: BluFiDeviceInfo)
 }
 
 // MARK: BluFi Manager Singleton
@@ -157,6 +178,9 @@ public class BluFiManager: NSObject {
         killStopScanTimer()
         dataOutCharacteristic = nil
         _blufiSequence = 0
+        aes = nil
+        dh = nil
+        fragmentedResponse.removeAll()
         
         guard let discoveredPeripheral = discoveredPeripheral else {
             return
@@ -201,10 +225,12 @@ extension BluFiManager: CBCentralManagerDelegate {
         //guard RSSI_range.contains(RSSI.intValue) && discoveredPeripheral != peripheral else { return }
         print("didDiscover \(peripheral) with RSSI \(RSSI.intValue)")
         
+        // FIXME: present list, don't connect first found
+        
         discoveredPeripheral = peripheral
         centralManager.connect(peripheral, options: [:])
         
-        delegate?.didUpdate(self, status: "Discovered blufi device")
+        delegate?.didUpdate(self, status: "Discovered \(peripheral.name ?? "blufi device")")
     }
     
     public func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
@@ -326,11 +352,9 @@ extension BluFiManager {
             
             for (index, chunk) in dataChunks.enumerated() {
                 if index == dataChunks.endIndex-1 {
-                    writeNegotiateData(data: chunk)
-                    print("startNegotiation last chunk")
+                    writeNegotiateData(data: chunk) // last chunk
                 } else {
-                    writeNegotiateData(data: chunk, total: len)
-                    print("startNegotiation chunk")
+                    writeNegotiateData(data: chunk, total: len) // first chunks
                 }
             }
         }
@@ -385,14 +409,14 @@ extension BluFiManager {
         if type == 0x01 {
             switch subtype {
             case 0x00: // Negotiate_Data_DataSubType
-                if let key = self.dh?.exchangeKeyHash(shared: payload) {
-                    print("Negotiated AES Key")
+                if let key = self.dh?.exchangeKeyHash(shared: fragmentedResponse) {
                     self.aes = AESCFBNOPAD(key: key)
+                    writeSecurity(security: true, checksum: true)
+                    delegate?.didUpdate(self, status: "Negotiated AES Key")
                 }
-                writeSecurity(security: true, checksum: true)
             case 0x11: // Wifi_List_DataSubType
                 let arrList = fragmentedResponse
-                var strList = [WifiEntry]()
+                var wifiList = [BluFiWifi]()
                 var idx = 0
                 while idx < arrList.count {
                     let len = Int(arrList[idx+0])
@@ -405,13 +429,13 @@ extension BluFiManager {
                     }
                     let nameArr = Array(arrList[offsetBegin..<offsetEnd])
                     if let name = String(bytes: nameArr, encoding: .utf8) {
-                        strList.append(WifiEntry(name, rssi))
+                        wifiList.append(BluFiWifi(name, rssi))
                     }
                     idx = offsetEnd
                 }
-                delegate?.didReceiveWifi(self, list: strList)
+                delegate?.didReceive(self, wifi: wifiList)
             case 0x12:
-                print("Error: \(payload[0])")
+                delegate?.didReceive(self, error: BluFiError(payload[0]))
             case 0x0f: // Wifi_Connection_state_Report_DataSubType
                 if data.count == 0x13 {
                     if let ssid = String(data: data[13..<payload[12]], encoding: .utf8) {
@@ -420,7 +444,7 @@ extension BluFiManager {
                     let bssid = String(format: "%02x:%02x:%02x:%02x:%02x:%02x", payload[5], payload[6], payload[7], payload[8], payload[9], payload[10])
                     print("BSSID: \(bssid)")
                 }
-                delegate?.didUpdate(self, status: "Opmode: \(payload[0]) STA: \(payload[1]) SoftAP: \(payload[2])")
+                delegate?.didReceive(self, deviceInfo: BluFiDeviceInfo(payload))
             default: ()
             }
         }

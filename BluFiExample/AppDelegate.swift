@@ -66,8 +66,16 @@ extension AppDelegate: BluFiManagerDelegate {
         print("didUpdate: \(status ?? "n/a")")
     }
     
-    func didReceiveWifi(_ manager: BluFiManager, list: [WifiEntry]) {
-        print("didReceive: \(list)")
+    func didReceive(_ manager: BluFiManager, wifi: [BluFiWifi]) {
+        print("Wifi: \(wifi)")
+    }
+    
+    func didReceive(_ manager: BluFiManager, error: BluFiError) {
+        print("Error: \(error)")
+    }
+    
+    func didReceive(_ manager: BluFiManager, deviceInfo: BluFiDeviceInfo) {
+        print("Device: \(deviceInfo)")
     }
 }
 
