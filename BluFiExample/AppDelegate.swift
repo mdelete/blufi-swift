@@ -25,8 +25,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        BluFiManager.shared.delegate = self
-        
         print("\(getWifiSsid() ?? "n/a")")
         
         // Override point for customization after application launch.
@@ -48,34 +46,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
 }
-
-extension AppDelegate: BluFiManagerDelegate {
-    func didStopScanning(_ manager: BluFiManager) {
-        print("didStopScanning")
-    }
-    
-    func didConnect(_ manager: BluFiManager) {
-        print("didConnect")
-    }
-    
-    func didDisconnect(_ manager: BluFiManager) {
-        print("didDisconnect")
-    }
-    
-    func didUpdate(_ manager: BluFiManager, status: String?) {
-        print("didUpdate: \(status ?? "n/a")")
-    }
-    
-    func didReceive(_ manager: BluFiManager, wifi: [BluFiWifi]) {
-        print("Wifi: \(wifi)")
-    }
-    
-    func didReceive(_ manager: BluFiManager, error: BluFiError) {
-        print("Error: \(error)")
-    }
-    
-    func didReceive(_ manager: BluFiManager, deviceInfo: BluFiDeviceInfo) {
-        print("Device: \(deviceInfo)")
-    }
-}
-
