@@ -88,7 +88,7 @@ public class CRC {
     
     internal static func update(crc: UInt16, data: [UInt8], table: [UInt16]) -> UInt16 {
         var crcRet = crc
-        let skippedLeadingBytes = Array(data[2..<data.count]) // FIXME: orignal protocol skips the two leading bytes, this is a bad place to do this
+        let skippedLeadingBytes = Array(data[2..<data.count]) // FIXME: original protocol skips the two leading bytes, this is a bad place to do this
         for d in skippedLeadingBytes {
             let idx = Int(UInt8(crcRet>>8)^UInt8(d))
             crcRet = crcRet<<8 ^ table[idx]
@@ -132,10 +132,12 @@ class AESCFBNOPAD {
     }
     
     func encrypt(_ data: [UInt8], seq: UInt8) -> [UInt8] {
+        print("AES encrypt")
         return cc(data: data, seq: seq, kCCEncrypt)
     }
     
     func decrypt(_ data: [UInt8], seq: UInt8) -> [UInt8] {
+        print("AES decrypt")
         return cc(data: data, seq: seq, kCCDecrypt)
     }
     

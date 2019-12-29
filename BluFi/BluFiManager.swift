@@ -664,7 +664,7 @@ extension BluFiManager {
     
     public func writeCustomData(_ data: Data) {
         
-        var packet = [UInt8](repeating: 0, count: data.count)
+        var packet = [UInt8](repeating: 0, count: 4)
         
         packet[0] = (0x13<<2) | 0x01
         

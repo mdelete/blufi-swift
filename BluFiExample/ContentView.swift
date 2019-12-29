@@ -16,7 +16,7 @@ struct ModalView: View {
     
     var body: some View {
         NavigationView() {
-            List(wifi.list) { wifi in
+            List(wifi.networks) { wifi in
                 HStack {
                     Text("\(wifi.rssi)")
                         .frame(width: 50, height: 30, alignment: .leading)
@@ -36,12 +36,12 @@ struct ModalView: View {
 
 struct Wifi : Identifiable {
     let id = UUID()
-    struct List : Identifiable {
+    struct Networks : Identifiable {
         let id : String
         let rssi : Int8
     }
     let current : String? = nil
-    let list : [List]
+    let networks : [Networks]
 }
 
 struct ContentView: View {
@@ -57,7 +57,7 @@ struct ContentView: View {
                 
                 Button(action: {
                     print("Custom tapped!")
-                    let data = "NOOB".data(using: .ascii)!
+                    let data = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX".data(using: .ascii)!
                     BluFiManager.shared.writeCustomData(data)
                 }) {
                     Text("Custom Data")
@@ -67,10 +67,6 @@ struct ContentView: View {
                         .foregroundColor(.white)
                         .background(Color("Orange"))
                         .cornerRadius(40)
-                }.sheet(item: self.$wifiList, onDismiss: {
-                    print("dismissed")
-                }) { list in
-                    ModalView(wifi: .constant(list)) // FIXME: this seems wrong
                 }
                 
                 Button(action: {
@@ -84,6 +80,10 @@ struct ContentView: View {
                         .foregroundColor(.white)
                         .background(Color("Orange"))
                         .cornerRadius(40)
+                }.sheet(item: self.$wifiList, onDismiss: {
+                    print("dismissed")
+                }) { list in
+                    ModalView(wifi: .constant(list)) // FIXME: this seems wrong
                 }
                 
                 Button(action: {
@@ -98,6 +98,8 @@ struct ContentView: View {
                         .background(Color("Orange"))
                         .cornerRadius(40)
                 }
+                
+
             }
         }
     }
@@ -141,8 +143,8 @@ struct SomeDelegateObserver: UIViewControllerRepresentable {
         
         func didReceive(_ manager: BluFiManager, wifi: [BluFiWifi]) {
             print("Wifi: \(wifi)")
-            foo(Wifi(list: wifi.map {
-                Wifi.List(id: $0.ssid, rssi: $0.rssi)
+            foo(Wifi(networks: wifi.map {
+                Wifi.Networks(id: $0.ssid, rssi: $0.rssi)
             }))
         }
         
@@ -164,6 +166,6 @@ struct ContentView_Previews: PreviewProvider {
 
 struct ModalView_Previews: PreviewProvider {
     static var previews: some View {
-        ModalView(wifi: .constant(Wifi(list: [Wifi.List(id: "MyNet", rssi: -42)])))
+        ModalView(wifi: .constant(Wifi(networks: [Wifi.Networks(id: "MyNet", rssi: -42)])))
     }
 }
