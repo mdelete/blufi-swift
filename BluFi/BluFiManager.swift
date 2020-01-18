@@ -451,14 +451,6 @@ extension BluFiManager {
             case 0x12:
                 delegate?.didReceive(self, error: BluFiError(payload[0]))
             case 0x0f: // Wifi_Connection_state_Report_DataSubType
-                
-//                if data.count == 0x13 {
-//                    if let ssid = String(data: data[13..<payload[12]], encoding: .utf8) {
-//                        print("SSID: \(ssid)")
-//                    }
-//                    let bssid = String(format: "%02x:%02x:%02x:%02x:%02x:%02x", payload[5], payload[6], payload[7], payload[8], payload[9], payload[10])
-//                    print("BSSID: \(bssid)")
-//                }
                 delegate?.didReceive(self, deviceInfo: BluFiDeviceInfo(payload))
             default: ()
             }
