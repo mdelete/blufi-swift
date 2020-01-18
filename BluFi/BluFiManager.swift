@@ -94,11 +94,26 @@ public struct BluFiDeviceInfo {
     public var opmode: UInt8
     public var sta: UInt8
     public var softap: UInt8
+    public var bssid: Data?
+    public var ssid: String?
     
     public init(_ payload: [UInt8]) {
         self.opmode = payload[0]
         self.sta = payload[1]
         self.softap = payload[2]
+        
+        if payload.count > 4, payload[3] == 1 {
+            let bssid_end_index = Int(payload[4] + 4)
+            if payload.count > bssid_end_index {
+                bssid = Data(payload[5...bssid_end_index])
+            }
+            if payload.count > (bssid_end_index + 2), payload[bssid_end_index + 1] == 2 {
+                let ssid_end_index = Int(payload[bssid_end_index + 2]) + bssid_end_index + 2
+                if payload.count > ssid_end_index {
+                    ssid = String(decoding: payload[(bssid_end_index + 3)...ssid_end_index], as: UTF8.self)
+                }
+            }
+        }
     }
 }
 
@@ -299,7 +314,6 @@ extension BluFiManager: CBPeripheralDelegate {
             print(error.localizedDescription)
         } else if characteristic == dataInCharacteristic {
             guard let newData = characteristic.value else { return }
-            //print("Data: \(newData.hexEncodedString())")
             readData(data: newData)
         }
     }
@@ -437,13 +451,14 @@ extension BluFiManager {
             case 0x12:
                 delegate?.didReceive(self, error: BluFiError(payload[0]))
             case 0x0f: // Wifi_Connection_state_Report_DataSubType
-                if data.count == 0x13 {
-                    if let ssid = String(data: data[13..<payload[12]], encoding: .utf8) {
-                        print("SSID: \(ssid)")
-                    }
-                    let bssid = String(format: "%02x:%02x:%02x:%02x:%02x:%02x", payload[5], payload[6], payload[7], payload[8], payload[9], payload[10])
-                    print("BSSID: \(bssid)")
-                }
+                
+//                if data.count == 0x13 {
+//                    if let ssid = String(data: data[13..<payload[12]], encoding: .utf8) {
+//                        print("SSID: \(ssid)")
+//                    }
+//                    let bssid = String(format: "%02x:%02x:%02x:%02x:%02x:%02x", payload[5], payload[6], payload[7], payload[8], payload[9], payload[10])
+//                    print("BSSID: \(bssid)")
+//                }
                 delegate?.didReceive(self, deviceInfo: BluFiDeviceInfo(payload))
             default: ()
             }
@@ -721,5 +736,4 @@ extension BluFiManager {
         
         self.write(data: Data(packet))
     }
-
 }
