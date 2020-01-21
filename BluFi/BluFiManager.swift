@@ -137,7 +137,7 @@ public class BluFiManager: NSObject {
     private let BluFiDataOutCharsUUID = CBUUID(string: "0000ff01-0000-1000-8000-00805f9b34fb")
     private let BluFiDataInCharsUUID = CBUUID(string: "0000ff02-0000-1000-8000-00805f9b34fb")
     
-    fileprivate var discoveredPeripheral: CBPeripheral!
+    fileprivate var discoveredPeripheral: CBPeripheral?
     fileprivate var dataOutCharacteristic: CBCharacteristic?
     fileprivate var dataInCharacteristic: CBCharacteristic?
     
@@ -192,10 +192,7 @@ public class BluFiManager: NSObject {
         shouldReconnect = false
         killStopScanTimer()
         dataOutCharacteristic = nil
-        _blufiSequence = 0
-        aes = nil
-        dh = nil
-        fragmentedResponse.removeAll()
+        resetNegotiation()
         
         guard let discoveredPeripheral = discoveredPeripheral else {
             return
@@ -241,9 +238,10 @@ extension BluFiManager: CBCentralManagerDelegate {
         print("didDiscover \(peripheral) with RSSI \(RSSI.intValue)")
         
         // FIXME: present list, don't connect first found
-        
-        discoveredPeripheral = peripheral
-        centralManager.connect(peripheral, options: [:])
+        if discoveredPeripheral == nil {
+            discoveredPeripheral = peripheral
+            centralManager.connect(peripheral, options: [:])
+        }
         
         delegate?.didUpdate(self, status: "Discovered \(peripheral.name ?? "blufi device")")
     }
@@ -262,6 +260,7 @@ extension BluFiManager: CBCentralManagerDelegate {
     }
     
     public func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
+        resetNegotiation()
         if (peripheral == discoveredPeripheral) {
             if shouldReconnect {
                 centralManager.connect(peripheral, options: [:])
@@ -348,6 +347,13 @@ extension BluFiManager {
         set {
              _blufiSequence = 0
         }
+    }
+    
+    fileprivate func resetNegotiation() {
+        _blufiSequence = 0
+        aes = nil
+        dh = nil
+        fragmentedResponse.removeAll()
     }
     
     fileprivate func startNegotiation() {
