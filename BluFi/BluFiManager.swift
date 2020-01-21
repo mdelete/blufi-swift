@@ -264,6 +264,7 @@ extension BluFiManager: CBCentralManagerDelegate {
         if (peripheral == discoveredPeripheral) {
             if shouldReconnect {
                 centralManager.connect(peripheral, options: [:])
+                delegate?.didUpdate(self, status: "Reconnected " + (peripheral.name ?? "blufi device"))
             } else {
                 cleanup()
                 delegate?.didDisconnect(self)
