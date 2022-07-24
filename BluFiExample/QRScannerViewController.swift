@@ -1,9 +1,9 @@
 //
 //  QRScannerViewController.swift
-//  crewplanner
+//  BluFiExample
 //
 //  Created by Marc Delling on 18.04.22.
-//  Copyright © 2022 Silpion IT-Solutions GmbH. All rights reserved.
+//  Copyright © 2022 Marc Delling. All rights reserved.
 //
 
 import UIKit
@@ -183,23 +183,18 @@ public class QRCodeScannerController: UIViewController, AVCaptureMetadataOutputO
     func createCornerFrame() {
         let width: CGFloat = 200.0
         let height: CGFloat = 200.0
-        
-        let rect = CGRect.init(
-            origin: CGPoint.init(
-                x: self.view.frame.midX - width/2,
-                y: self.view.frame.midY - (width+bottomSpace)/2),
-            size: CGSize.init(width: width, height: height))
+        let rect = CGRect.init(origin: CGPoint.init(x: self.view.frame.midX - width/2, y: self.view.frame.midY - (width+bottomSpace)/2), size: CGSize.init(width: width, height: height))
         self.squareView = SquareView(frame: rect)
         if let squareView = squareView {
             self.view.backgroundColor = UIColor(white: 0.0, alpha: 0.5)
             squareView.autoresizingMask = UIView.AutoresizingMask(rawValue: UInt(0.0))
             self.view.addSubview(squareView)
-            
             addMaskLayerToVideoPreviewLayerAndAddText(rect: rect)
         }
     }
     
     func addMaskLayerToVideoPreviewLayerAndAddText(rect: CGRect) {
+
         let maskLayer = CAShapeLayer()
         maskLayer.frame = view.bounds
         maskLayer.fillColor = UIColor(white: 0.0, alpha: 0.5).cgColor
@@ -207,7 +202,6 @@ public class QRCodeScannerController: UIViewController, AVCaptureMetadataOutputO
         path.append(UIBezierPath(rect: view.bounds))
         maskLayer.path = path.cgPath
         maskLayer.fillRule = CAShapeLayerFillRule.evenOdd
-        
         view.layer.insertSublayer(maskLayer, above: videoPreviewLayer)
         
         let noteText = CATextLayer()

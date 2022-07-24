@@ -91,11 +91,11 @@ public struct BluFiWifi {
 
 public struct BluFiDeviceInfo {
     
-    public var opmode: UInt8 // 0 - NULL, 1 - STA, 2 - SoftAP, 3 - STA & SoftAP
-    public var sta: UInt8 // 0 - connected, others: disconnected
-    public var softap: UInt8 // number of sta devices connected to the SoftAP
-    public var bssid: Data? // 6-bytes BSSID
-    public var ssid: String? // UTF-8 string of SSID
+    public var opmode: UInt8    /// 0: NULL, 1: STA, 2: SoftAP, 3: STA & SoftAP
+    public var sta:    UInt8    /// 0: connected, others: disconnected
+    public var softap: UInt8    /// Number of STA devices connected to the SoftAP
+    public var bssid:  Data?    /// 6-bytes BSSID
+    public var ssid:   String?  /// UTF-8 string of SSID
     
     public init(_ payload: [UInt8]) {
         self.opmode = payload[0]
@@ -145,7 +145,7 @@ public class BluFiManager: NSObject {
     
     public static let shared = BluFiManager()
     
-    weak var stopScanTimer : Timer?
+    private weak var stopScanTimer : Timer?
     public weak var delegate : BluFiManagerDelegate?
     
     fileprivate var _blufiSequence = UInt8(0)
@@ -250,10 +250,10 @@ extension BluFiManager: CBCentralManagerDelegate {
         }
     }
     
-    public func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-        print("didDiscover \(peripheral.name ?? "n/a") with RSSI \(RSSI.intValue)")
+    public func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi: NSNumber) {
+        print("didDiscover \(peripheral.name ?? "n/a") with rssi \(rssi.intValue)")
         discoveredPeripherals.insert(peripheral)
-        delegate?.didDiscover(self, peripheral, RSSI)
+        delegate?.didDiscover(self, peripheral, rssi)
     }
     
     public func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {

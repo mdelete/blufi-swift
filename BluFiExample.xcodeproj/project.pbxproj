@@ -12,7 +12,6 @@
 		9487E88423B1AB600073199A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9487E88323B1AB600073199A /* AppDelegate.swift */; };
 		9487E88623B1AB600073199A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9487E88523B1AB600073199A /* SceneDelegate.swift */; };
 		9487E88A23B1AB620073199A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9487E88923B1AB620073199A /* Assets.xcassets */; };
-		9487E88D23B1AB620073199A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9487E88C23B1AB620073199A /* Preview Assets.xcassets */; };
 		9487E89023B1AB620073199A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9487E88E23B1AB620073199A /* LaunchScreen.storyboard */; };
 		9487E8A023B1AB9F0073199A /* BluFi.h in Headers */ = {isa = PBXBuildFile; fileRef = 9487E89E23B1AB9F0073199A /* BluFi.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9487E8A323B1AB9F0073199A /* BluFi.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9487E89C23B1AB9F0073199A /* BluFi.framework */; };
@@ -78,7 +77,6 @@
 		9487E88323B1AB600073199A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9487E88523B1AB600073199A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		9487E88923B1AB620073199A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		9487E88C23B1AB620073199A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		9487E88F23B1AB620073199A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9487E89123B1AB620073199A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9487E89C23B1AB9F0073199A /* BluFi.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BluFi.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -167,17 +165,8 @@
 				9487E88E23B1AB620073199A /* LaunchScreen.storyboard */,
 				9487E89123B1AB620073199A /* Info.plist */,
 				942E26B92505343300BEDB9F /* Credentials.plist */,
-				9487E88B23B1AB620073199A /* Preview Content */,
 			);
 			path = BluFiExample;
-			sourceTree = "<group>";
-		};
-		9487E88B23B1AB620073199A /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				9487E88C23B1AB620073199A /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 		9487E89D23B1AB9F0073199A /* BluFi */ = {
@@ -317,7 +306,6 @@
 			files = (
 				9487E89023B1AB620073199A /* LaunchScreen.storyboard in Resources */,
 				942E26BA2505343300BEDB9F /* Credentials.plist in Resources */,
-				9487E88D23B1AB620073199A /* Preview Assets.xcassets in Resources */,
 				9487E88A23B1AB620073199A /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -522,7 +510,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = BluFiExample/BluFiExample.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"BluFiExample/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 67X5G8WXSG;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = BluFiExample/Info.plist;
@@ -544,7 +532,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = BluFiExample/BluFiExample.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"BluFiExample/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 67X5G8WXSG;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = BluFiExample/Info.plist;

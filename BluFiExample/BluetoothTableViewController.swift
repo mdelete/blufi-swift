@@ -82,13 +82,12 @@ class BluetoothTableViewController: UITableViewController, UIPopoverPresentation
     
     func presentationController(_ controller: UIPresentationController, viewControllerForAdaptivePresentationStyle style: UIModalPresentationStyle) -> UIViewController? {
         let navigationController = UINavigationController(rootViewController: controller.presentedViewController)
-        let done = UIBarButtonItem(title: NSLocalizedString("Fertig", comment: ""), style: .done, target: self, action: #selector(dismissPopover))
+        let done = UIBarButtonItem(title: NSLocalizedString("Cancel", comment: ""), style: .done, target: self, action: #selector(dismissPopover))
         navigationController.topViewController?.navigationItem.rightBarButtonItem = done
         return navigationController
     }
     
     @objc func dismissPopover() {
-        print("dismiss")
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -117,16 +116,15 @@ class BluetoothTableViewController: UITableViewController, UIPopoverPresentation
 }
 
 extension BluetoothTableViewController: BluFiManagerDelegate {
+
     func didStopScanning(_ manager: BluFiManager) {
         DispatchQueue.main.async {
             self.refreshControl?.endRefreshing()
             self.tableView.reloadData()
-            print("stopped scanning")
         }
     }
     
     func didConnect(_ manager: BluFiManager, _ peripheral: CBPeripheral?) {
-        print("didConnect")
         BluFiManager.shared.writeDisconnectAP()
         BluFiManager.shared.triggerWifiList()
     }
@@ -161,9 +159,11 @@ extension BluetoothTableViewController: BluFiManagerDelegate {
         print("didReceiveNetworks")
         DispatchQueue.main.async {
             
+            // FIXME: don't push another WifiTableViewController if already displayed
             if type(of: self.navigationController?.visibleViewController) == WifiTableViewController.self{
                     print("Already presentingXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
             }
+            
             SwiftSpinner.hide()
             
             let wifiTableViewController = WifiTableViewController()
@@ -174,11 +174,11 @@ extension BluetoothTableViewController: BluFiManagerDelegate {
     }
     
     func didReceiveInfo(_ manager: BluFiManager, deviceInfo: BluFiDeviceInfo) {
-        print("didReceiveInfo: \(deviceInfo)")
         if deviceInfo.opmode == 1, deviceInfo.sta == 0, let ssid = deviceInfo.ssid {
             print("Connected to network \(ssid)")
         }
     }
+
 }
 
 extension BluetoothTableViewController: QRScannerCodeDelegate {
@@ -198,9 +198,11 @@ extension BluetoothTableViewController: QRScannerCodeDelegate {
     func qrScannerDidCancel(_ controller: UIViewController) {
         print("qrScannerDidCancel")
     }
+
 }
 
 extension UIImage {
+
     func scale(to newSize: CGSize) -> UIImage {
         UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
         self.draw(in: CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height))
@@ -208,6 +210,7 @@ extension UIImage {
         UIGraphicsEndImageContext()
         return newImage
     }
+
 }
 
 extension String {

@@ -21,8 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {
             let window = UIWindow(windowScene: windowScene)
-            //window.rootViewController = UIHostingController(rootView: ContentView()) //SwiftUI
-            window.rootViewController = UINavigationController(rootViewController: BluetoothTableViewController()) //UIKit
+            window.rootViewController = UINavigationController(rootViewController: BluetoothTableViewController())
             self.window = window
             window.backgroundColor = .gray
             window.makeKeyAndVisible()
@@ -56,7 +55,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
     }
-
 
 }
 

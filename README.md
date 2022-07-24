@@ -21,7 +21,8 @@ TODOs
 Links
 -----
 
- * Contains a copy of [BigInt](https://github.com/attaswift/BigInt) for the DH-Key-Exchange
+ * Contains a copy of [BigInt](https://github.com/attaswift/BigInt) for the DH-Key-Exchange, and [SwiftSpinner](https://github.com/icanzilb/SwiftSpinner) for a nice blocking activity indicator.
+ * [BluFi API Guide](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/blufi.html)
 
 License
 -------
