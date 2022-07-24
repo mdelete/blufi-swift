@@ -2,7 +2,7 @@
 
 Experimental Swift Framework + Example to connect ESP32 devices to WiFi using the [BluFi Protocol](https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/bluetooth/esp_blufi.html).
 
-[![Build Status](https://travis-ci.org/mdelete/BluFiExample.svg?branch=master)](https://travis-ci.org/mdelete/BluFiExample)
+[![iOS build workflow](https://github.com/mdelete/blufi-swift/actions/workflows/ios.yml/badge.svg)](https://github.com/mdelete/blufi-swift/actions/workflows/ios.yml)
 
 Features
 --------
