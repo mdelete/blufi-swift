@@ -65,7 +65,6 @@ class DH {
         str += "\nG:  " + G.serialize().hexEncodedString(options: [.upperCase])
         str += "\nPUB: " + p.serialize().hexEncodedString(options: [.upperCase])
         str += "\nPRIV: " + s.serialize().hexEncodedString(options: [.upperCase]) + "\n\n"
-        
         return str
     }
     

@@ -7,9 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		942E26BA2505343300BEDB9F /* Credentials.plist in Resources */ = {isa = PBXBuildFile; fileRef = 942E26B92505343300BEDB9F /* Credentials.plist */; };
+		944420CD24FAD89500D516AE /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944420CC24FAD89500D516AE /* Keychain.swift */; };
 		9487E88423B1AB600073199A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9487E88323B1AB600073199A /* AppDelegate.swift */; };
 		9487E88623B1AB600073199A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9487E88523B1AB600073199A /* SceneDelegate.swift */; };
-		9487E88823B1AB600073199A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9487E88723B1AB600073199A /* ContentView.swift */; };
 		9487E88A23B1AB620073199A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9487E88923B1AB620073199A /* Assets.xcassets */; };
 		9487E88D23B1AB620073199A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9487E88C23B1AB620073199A /* Preview Assets.xcassets */; };
 		9487E89023B1AB620073199A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9487E88E23B1AB620073199A /* LaunchScreen.storyboard */; };
@@ -40,6 +41,10 @@
 		9487E91123B1AC1E0073199A /* Integer Conversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9487E8F823B1AC1E0073199A /* Integer Conversion.swift */; };
 		9487E91223B1AC1E0073199A /* BigInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9487E8F923B1AC1E0073199A /* BigInt.swift */; };
 		9487E91323B1AC1E0073199A /* String Conversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9487E8FA23B1AC1E0073199A /* String Conversion.swift */; };
+		94DCE8C2288B5B7E00BBFDBC /* BluetoothTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94DCE8C1288B5B7E00BBFDBC /* BluetoothTableViewController.swift */; };
+		94DCE8C4288C5E4400BBFDBC /* WifiTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94DCE8C3288C5E4400BBFDBC /* WifiTableViewController.swift */; };
+		94DCE8C6288C676B00BBFDBC /* QRScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94DCE8C5288C676B00BBFDBC /* QRScannerViewController.swift */; };
+		94DCE8C8288CA1E300BBFDBC /* SwiftSpinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94DCE8C7288CA1E300BBFDBC /* SwiftSpinner.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,10 +72,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		942E26B92505343300BEDB9F /* Credentials.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Credentials.plist; sourceTree = "<group>"; };
+		944420CC24FAD89500D516AE /* Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
 		9487E88023B1AB600073199A /* BluFiExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BluFiExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9487E88323B1AB600073199A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9487E88523B1AB600073199A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		9487E88723B1AB600073199A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		9487E88923B1AB620073199A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9487E88C23B1AB620073199A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		9487E88F23B1AB620073199A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -103,6 +109,10 @@
 		9487E8F923B1AC1E0073199A /* BigInt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BigInt.swift; sourceTree = "<group>"; };
 		9487E8FA23B1AC1E0073199A /* String Conversion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String Conversion.swift"; sourceTree = "<group>"; };
 		9487E91423B1AD7B0073199A /* BluFiExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BluFiExample.entitlements; sourceTree = "<group>"; };
+		94DCE8C1288B5B7E00BBFDBC /* BluetoothTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothTableViewController.swift; sourceTree = "<group>"; };
+		94DCE8C3288C5E4400BBFDBC /* WifiTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WifiTableViewController.swift; sourceTree = "<group>"; };
+		94DCE8C5288C676B00BBFDBC /* QRScannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerViewController.swift; sourceTree = "<group>"; };
+		94DCE8C7288CA1E300BBFDBC /* SwiftSpinner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftSpinner.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,11 +157,16 @@
 			children = (
 				9487E91423B1AD7B0073199A /* BluFiExample.entitlements */,
 				9487E88323B1AB600073199A /* AppDelegate.swift */,
+				94DCE8C1288B5B7E00BBFDBC /* BluetoothTableViewController.swift */,
+				94DCE8C3288C5E4400BBFDBC /* WifiTableViewController.swift */,
+				94DCE8C5288C676B00BBFDBC /* QRScannerViewController.swift */,
 				9487E88523B1AB600073199A /* SceneDelegate.swift */,
-				9487E88723B1AB600073199A /* ContentView.swift */,
+				944420CC24FAD89500D516AE /* Keychain.swift */,
+				94DCE8C7288CA1E300BBFDBC /* SwiftSpinner.swift */,
 				9487E88923B1AB620073199A /* Assets.xcassets */,
 				9487E88E23B1AB620073199A /* LaunchScreen.storyboard */,
 				9487E89123B1AB620073199A /* Info.plist */,
+				942E26B92505343300BEDB9F /* Credentials.plist */,
 				9487E88B23B1AB620073199A /* Preview Content */,
 			);
 			path = BluFiExample;
@@ -264,7 +279,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1130;
-				LastUpgradeCheck = 1130;
+				LastUpgradeCheck = 1230;
 				ORGANIZATIONNAME = "Marc Delling";
 				TargetAttributes = {
 					9487E87F23B1AB600073199A = {
@@ -301,6 +316,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9487E89023B1AB620073199A /* LaunchScreen.storyboard in Resources */,
+				942E26BA2505343300BEDB9F /* Credentials.plist in Resources */,
 				9487E88D23B1AB620073199A /* Preview Assets.xcassets in Resources */,
 				9487E88A23B1AB620073199A /* Assets.xcassets in Resources */,
 			);
@@ -321,8 +337,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				9487E88423B1AB600073199A /* AppDelegate.swift in Sources */,
+				94DCE8C8288CA1E300BBFDBC /* SwiftSpinner.swift in Sources */,
+				94DCE8C2288B5B7E00BBFDBC /* BluetoothTableViewController.swift in Sources */,
+				94DCE8C4288C5E4400BBFDBC /* WifiTableViewController.swift in Sources */,
+				944420CD24FAD89500D516AE /* Keychain.swift in Sources */,
 				9487E88623B1AB600073199A /* SceneDelegate.swift in Sources */,
-				9487E88823B1AB600073199A /* ContentView.swift in Sources */,
+				94DCE8C6288C676B00BBFDBC /* QRScannerViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -405,6 +425,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -465,6 +486,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -550,7 +572,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = BluFi/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -580,7 +602,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = BluFi/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -24,10 +24,8 @@ public func getWifiSsid() -> String? {
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
-        print("\(getWifiSsid() ?? "n/a")")
-        
-        // Override point for customization after application launch.
+        print("CNCopyCurrentNetworkInfo: \(getWifiSsid() ?? "n/a")")
+        Keychain.preload()
         return true
     }
 

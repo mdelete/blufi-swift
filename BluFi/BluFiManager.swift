@@ -91,11 +91,11 @@ public struct BluFiWifi {
 
 public struct BluFiDeviceInfo {
     
-    public var opmode: UInt8
-    public var sta: UInt8
-    public var softap: UInt8
-    public var bssid: Data?
-    public var ssid: String?
+    public var opmode: UInt8 // 0 - NULL, 1 - STA, 2 - SoftAP, 3 - STA & SoftAP
+    public var sta: UInt8 // 0 - connected, others: disconnected
+    public var softap: UInt8 // number of sta devices connected to the SoftAP
+    public var bssid: Data? // 6-bytes BSSID
+    public var ssid: String? // UTF-8 string of SSID
     
     public init(_ payload: [UInt8]) {
         self.opmode = payload[0]
@@ -121,12 +121,12 @@ public struct BluFiDeviceInfo {
 
 public protocol BluFiManagerDelegate: NSObjectProtocol {
     func didStopScanning(_ manager: BluFiManager)
-    func didConnect(_ manager: BluFiManager)
+    func didConnect(_ manager: BluFiManager, _ peripheral: CBPeripheral?)
     func didDisconnect(_ manager: BluFiManager)
-    func didUpdate(_ manager: BluFiManager, status: String?)
-    func didReceive(_ manager: BluFiManager, error: BluFiError)
-    func didReceive(_ manager: BluFiManager, wifi: [BluFiWifi])
-    func didReceive(_ manager: BluFiManager, deviceInfo: BluFiDeviceInfo)
+    func didDiscover(_ manager: BluFiManager, _ peripheral: CBPeripheral, _ rssi: NSNumber)
+    func didReceiveNetworks(_ manager: BluFiManager, _ peripheral: CBPeripheral?, _ networks: [BluFiWifi])
+    func didReceiveError(_ manager: BluFiManager, error: BluFiError)
+    func didReceiveInfo(_ manager: BluFiManager, deviceInfo: BluFiDeviceInfo)
 }
 
 // MARK: BluFi Manager Singleton
@@ -137,11 +137,11 @@ public class BluFiManager: NSObject {
     private let BluFiDataOutCharsUUID = CBUUID(string: "0000ff01-0000-1000-8000-00805f9b34fb")
     private let BluFiDataInCharsUUID = CBUUID(string: "0000ff02-0000-1000-8000-00805f9b34fb")
     
+    private(set) var discoveredPeripherals = Set<CBPeripheral>()
+    
     fileprivate var discoveredPeripheral: CBPeripheral?
     fileprivate var dataOutCharacteristic: CBCharacteristic?
     fileprivate var dataInCharacteristic: CBCharacteristic?
-    
-    //let RSSI_range = -40..<(-15)  // optimal -22dB -> reality -48dB
     
     public static let shared = BluFiManager()
     
@@ -167,7 +167,7 @@ public class BluFiManager: NSObject {
     }
     
     fileprivate func applyStopScanTimer() {
-        Timer.scheduledTimer(withTimeInterval: TimeInterval(9.0), repeats: false) { (_) in
+        Timer.scheduledTimer(withTimeInterval: TimeInterval(1.61), repeats: false) { (_) in
             if self.centralManager.isScanning {
                 self.centralManager.stopScan()
                 self.delegate?.didStopScanning(self)
@@ -180,11 +180,29 @@ public class BluFiManager: NSObject {
         stopScanTimer = nil
     }
     
-    fileprivate func scan() {
-        killStopScanTimer()
-        centralManager.scanForPeripherals(withServices: [BluFiServiceUUID], options: [CBCentralManagerScanOptionAllowDuplicatesKey: NSNumber(value: true as Bool)])
-        applyStopScanTimer()
-        delegate?.didUpdate(self, status: "Scanning...")
+    public func scan() {
+        if !centralManager.isScanning {
+            killStopScanTimer()
+            discoveredPeripherals.removeAll()
+            centralManager.scanForPeripherals(withServices: [BluFiServiceUUID], options: [CBCentralManagerScanOptionAllowDuplicatesKey: NSNumber(value: true as Bool)])
+            applyStopScanTimer()
+            print("Scanning...")
+        } else {
+            print("Already scanning...")
+        }
+    }
+    
+    public func connect(_ peripheral: CBPeripheral) {
+        if !centralManager.isScanning && peripheral.state == .disconnected {
+            discoveredPeripheral = peripheral
+            centralManager.connect(peripheral, options: [:])
+        } else {
+            print("central.isScanning = \(centralManager.isScanning), peripheral.state == \(peripheral.state)")
+        }
+    }
+    
+    public func disconnect() {
+        cleanup()
     }
     
     fileprivate func cleanup() {
@@ -233,21 +251,15 @@ extension BluFiManager: CBCentralManagerDelegate {
     }
     
     public func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-        
-        //guard RSSI_range.contains(RSSI.intValue) && discoveredPeripheral != peripheral else { return }
-        print("didDiscover \(peripheral) with RSSI \(RSSI.intValue)")
-        
-        // FIXME: present list, don't connect first found
-        if discoveredPeripheral == nil {
-            discoveredPeripheral = peripheral
-            centralManager.connect(peripheral, options: [:])
-        }
-        
-        delegate?.didUpdate(self, status: "Discovered \(peripheral.name ?? "blufi device")")
+        print("didDiscover \(peripheral.name ?? "n/a") with RSSI \(RSSI.intValue)")
+        discoveredPeripherals.insert(peripheral)
+        delegate?.didDiscover(self, peripheral, RSSI)
     }
     
     public func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
-        if let error = error { print(error.localizedDescription) }
+        if let error = error {
+            print(error.localizedDescription)
+        }
         cleanup()
     }
     
@@ -256,7 +268,7 @@ extension BluFiManager: CBCentralManagerDelegate {
         shouldReconnect = true
         peripheral.delegate = self
         peripheral.discoverServices([BluFiServiceUUID])
-        delegate?.didUpdate(self, status: "Connected to " + (peripheral.name ?? "blufi device"))
+        print("Connected to device " + (peripheral.name ?? "blufi device"))
     }
     
     public func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
@@ -264,7 +276,7 @@ extension BluFiManager: CBCentralManagerDelegate {
         if (peripheral == discoveredPeripheral) {
             if shouldReconnect {
                 centralManager.connect(peripheral, options: [:])
-                delegate?.didUpdate(self, status: "Reconnected " + (peripheral.name ?? "blufi device"))
+                print("Reconnecting to device " + (peripheral.name ?? "blufi device"))
             } else {
                 cleanup()
                 delegate?.didDisconnect(self)
@@ -331,7 +343,7 @@ extension BluFiManager: CBPeripheralDelegate {
     
     public func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
         if let error = error {
-            print("write: \(error.localizedDescription)")
+            print("didWriteValueFor: \(error.localizedDescription)")
         }
     }
 }
@@ -433,7 +445,8 @@ extension BluFiManager {
                 if let key = self.dh?.exchangeKeyHash(shared: fragmentedResponse) {
                     self.aes = AESCFBNOPAD(key: key)
                     writeSecurity(security: true, checksum: true)
-                    delegate?.didUpdate(self, status: "Negotiated AES Key")
+                    print("Negotiated AES Key")
+                    delegate?.didConnect(self, discoveredPeripheral)
                 }
             case 0x11: // Wifi_List_DataSubType
                 let arrList = fragmentedResponse
@@ -445,7 +458,7 @@ extension BluFiManager {
                     let offsetBegin = idx + 2
                     let offsetEnd = idx + len + 1
                     if offsetEnd > arrList.count {
-                        print("Invalid wifi list array len")
+                        print("Invalid wifi list array len. Expected: \(offsetEnd) Found: \(arrList.count)")
                         break
                     }
                     let nameArr = Array(arrList[offsetBegin..<offsetEnd])
@@ -454,11 +467,13 @@ extension BluFiManager {
                     }
                     idx = offsetEnd
                 }
-                delegate?.didReceive(self, wifi: wifiList)
+                delegate?.didReceiveNetworks(self, discoveredPeripheral, wifiList)
             case 0x12:
-                delegate?.didReceive(self, error: BluFiError(payload[0]))
+                delegate?.didReceiveError(self, error: BluFiError(payload[0]))
             case 0x0f: // Wifi_Connection_state_Report_DataSubType
-                delegate?.didReceive(self, deviceInfo: BluFiDeviceInfo(payload))
+                delegate?.didReceiveInfo(self, deviceInfo: BluFiDeviceInfo(payload))
+            case 0x10: // Version
+                print("\(payload[0]).\(payload[1])")
             default: ()
             }
         }
