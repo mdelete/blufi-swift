@@ -52,14 +52,14 @@ open class SquareView: UIView {
         rectCornerContext?.addLine(to: CGPoint(x: self.bounds.size.width*sizeMultiplier, y: 0))
         rectCornerContext?.strokePath()
         
-        //top rigth corner
+        //top right corner
         rectCornerContext?.beginPath()
         rectCornerContext?.move(to: CGPoint(x: self.bounds.size.width - self.bounds.size.width*sizeMultiplier, y: 0))
         rectCornerContext?.addLine(to: CGPoint(x: self.bounds.size.width, y: 0))
         rectCornerContext?.addLine(to: CGPoint(x: self.bounds.size.width, y: self.bounds.size.height*sizeMultiplier))
         rectCornerContext?.strokePath()
         
-        //bottom rigth corner
+        //bottom right corner
         rectCornerContext?.beginPath()
         rectCornerContext?.move(to: CGPoint(x: self.bounds.size.width, y: self.bounds.size.height - self.bounds.size.height*sizeMultiplier))
         rectCornerContext?.addLine(to: CGPoint(x: self.bounds.size.width, y: self.bounds.size.height))
@@ -92,22 +92,17 @@ public class QRCodeScannerController: UIViewController, AVCaptureMetadataOutputO
     public weak var delegate: QRScannerCodeDelegate?
     private var flashButton: UIButton? = nil
     
-    //Extra images for adding extra features
     public var cameraImage: UIImage? = nil
     public var cancelImage: UIImage? = nil
     public var flashOnImage: UIImage? = nil
     public var flashOffImage: UIImage? = nil
-    
-    //Default Properties
+
     private let bottomSpace: CGFloat = 80.0
     private let spaceFactor: CGFloat = 16.0
     private let devicePosition: AVCaptureDevice.Position = .back
     private var delCnt: Int = 0
-    
-    //This is for adding delay so user will get sufficient time for align QR within frame
     private let delayCount: Int = 15
     
-    //Initialise CaptureDevice
     lazy var defaultDevice: AVCaptureDevice? = {
         if let device = AVCaptureDevice.default(for: .video) {
             return device
@@ -115,21 +110,13 @@ public class QRCodeScannerController: UIViewController, AVCaptureMetadataOutputO
         return nil
     }()
     
-    //Initialise front CaptureDevice
     lazy var frontDevice: AVCaptureDevice? = {
-        if #available(iOS 10, *) {
-            if let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front) {
-                return device
-            }
-        } else {
-            for device in AVCaptureDevice.devices(for: .video) {
-                if device.position == .front { return device }
-            }
+        if let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front) {
+            return device
         }
         return nil
     }()
     
-    //Initialise AVCaptureInput with defaultDevice
     lazy var defaultCaptureInput: AVCaptureInput? = {
         if let captureDevice = defaultDevice {
             do {
@@ -141,7 +128,6 @@ public class QRCodeScannerController: UIViewController, AVCaptureMetadataOutputO
         return nil
     }()
     
-    //Initialise AVCaptureInput with frontDevice
     lazy var frontCaptureInput: AVCaptureInput?  = {
         if let captureDevice = frontDevice {
             do {
@@ -154,11 +140,8 @@ public class QRCodeScannerController: UIViewController, AVCaptureMetadataOutputO
     }()
     
     lazy var dataOutput = AVCaptureMetadataOutput()
-    
-    //Initialise capture session
     lazy var captureSession = AVCaptureSession()
     
-    //Initialise videoPreviewLayer with capture session
     lazy var videoPreviewLayer: AVCaptureVideoPreviewLayer = {
         let layer = AVCaptureVideoPreviewLayer(session: self.captureSession)
         layer.videoGravity = AVLayerVideoGravity.resizeAspectFill
@@ -170,7 +153,6 @@ public class QRCodeScannerController: UIViewController, AVCaptureMetadataOutputO
         super.init(nibName: nil, bundle: nil)
     }
     
-    //Convinience init for adding extra images (camera, torch, cancel)
     convenience public init(cameraImage: UIImage?, cancelImage: UIImage?, flashOnImage: UIImage?, flashOffImage: UIImage?) {
         self.init()
         self.cameraImage = cameraImage
@@ -183,14 +165,8 @@ public class QRCodeScannerController: UIViewController, AVCaptureMetadataOutputO
         fatalError("init(coder:) has not been implemented")
     }
     
-    deinit {
-        print("SwiftQRScanner deallocating...")
-    }
-    
-    //MARK: Life cycle methods
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        //Currently only "Portraint" mode is supported
         UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
         delCnt = 0
         prepareQRScannerView(self.view)
@@ -198,8 +174,8 @@ public class QRCodeScannerController: UIViewController, AVCaptureMetadataOutputO
     }
     
     func prepareQRScannerView(_ view: UIView) {
-        setupCaptureSession(devicePosition) //Default device capture position is rear
-        addViedoPreviewLayer(view)
+        setupCaptureSession(devicePosition)
+        addVideoPreviewLayer(view)
         createCornerFrame()
         addButtons(view)
     }
@@ -300,7 +276,7 @@ public class QRCodeScannerController: UIViewController, AVCaptureMetadataOutputO
     }
     
     @objc func toggleTorch() {
-        //If device postion is front then no need to torch
+
         if let currentInput = getCurrentInput() {
             if currentInput.device.position == .front { return }
         }
@@ -327,7 +303,6 @@ public class QRCodeScannerController: UIViewController, AVCaptureMetadataOutputO
         }
     }
     
-    //Switch camera
     @objc func switchCamera() {
         if let frontDeviceInput = frontCaptureInput {
             captureSession.beginConfiguration()
@@ -352,7 +327,7 @@ public class QRCodeScannerController: UIViewController, AVCaptureMetadataOutputO
         delegate?.qrScannerDidCancel(self)
     }
     
-    //MARK: - Setup and start capturing session
+    // MARK: - Setup and start capturing session
     
     open func startScanningQRCode() {
         if captureSession.isRunning { return }
@@ -366,7 +341,7 @@ public class QRCodeScannerController: UIViewController, AVCaptureMetadataOutputO
         case .front:
             if let frontDeviceInput = frontCaptureInput {
                 if !captureSession.canAddInput(frontDeviceInput) {
-                    delegate?.qrScannerDidFail(self, error: "Failed to add Input")
+                    delegate?.qrScannerDidFail(self, error: "failed to add input")
                     self.dismiss(animated: true, completion: nil)
                     return
                 }
@@ -376,18 +351,18 @@ public class QRCodeScannerController: UIViewController, AVCaptureMetadataOutputO
         case .back, .unspecified :
             if let defaultDeviceInput = defaultCaptureInput {
                 if !captureSession.canAddInput(defaultDeviceInput) {
-                    delegate?.qrScannerDidFail(self, error: "Failed to add Input")
+                    delegate?.qrScannerDidFail(self, error: "failed to add input")
                     self.dismiss(animated: true, completion: nil)
                     return
                 }
                 captureSession.addInput(defaultDeviceInput)
             }
             break
-        default: print("Do nothing")
+        default: ()
         }
         
         if !captureSession.canAddOutput(dataOutput) {
-            delegate?.qrScannerDidFail(self, error: "Failed to add Output")
+            delegate?.qrScannerDidFail(self, error: "failed to add output")
             self.dismiss(animated: true, completion: nil)
             return
         }
@@ -397,13 +372,11 @@ public class QRCodeScannerController: UIViewController, AVCaptureMetadataOutputO
         dataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
     }
     
-    //Inserts layer to view
-    private func addViedoPreviewLayer(_ view: UIView) {
+    private func addVideoPreviewLayer(_ view: UIView) {
         videoPreviewLayer.frame = CGRect(x:view.bounds.origin.x, y: view.bounds.origin.y, width: view.bounds.size.width, height: view.bounds.size.height - bottomSpace)
         view.layer.insertSublayer(videoPreviewLayer, at: 0)
     }
     
-    // This method get called when Scanning gets complete
     public func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
         
         for data in metadataObjects {

@@ -29,7 +29,7 @@ struct AgingRssiPeripheral: Comparable, Hashable {
     }
 }
 
-class BluetoothTableViewController: UITableViewController {
+class BluetoothTableViewController: UITableViewController, UIPopoverPresentationControllerDelegate {
 
     var peripherals = Set<AgingRssiPeripheral>()
     var peripheralArray = [AgingRssiPeripheral]()
@@ -41,6 +41,9 @@ class BluetoothTableViewController: UITableViewController {
 
         self.navigationItem.title = "BluFi Devices"
         self.navigationController?.navigationBar.prefersLargeTitles = true
+        
+        let scanImage = UIImage(named: "scan")?.scale(to: CGSize(width: 25, height: 25))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: scanImage, style: .plain, target: self, action: #selector(qrScanAction(sender:)))
         
         BluFiManager.shared.delegate = self
     }
@@ -57,7 +60,38 @@ class BluetoothTableViewController: UITableViewController {
         peripherals.removeAll()
         BluFiManager.shared.scan()
     }
-
+    
+    @objc func qrScanAction(sender: UITapGestureRecognizer) {
+        let scannerViewController = QRCodeScannerController()
+        scannerViewController.modalPresentationStyle = UIModalPresentationStyle.popover
+        scannerViewController.delegate = self
+        let popover = scannerViewController.popoverPresentationController
+        //popover?.sourceView = imageView
+        //popover?.sourceRect = imageView.bounds
+        popover?.barButtonItem = self.navigationItem.rightBarButtonItem
+        popover?.permittedArrowDirections = [.up]
+        popover?.delegate = self
+        present(scannerViewController, animated: true, completion: nil)
+    }
+    
+    // MARK: - Popover Delegates
+    
+    func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
+        return UIModalPresentationStyle.fullScreen
+    }
+    
+    func presentationController(_ controller: UIPresentationController, viewControllerForAdaptivePresentationStyle style: UIModalPresentationStyle) -> UIViewController? {
+        let navigationController = UINavigationController(rootViewController: controller.presentedViewController)
+        let done = UIBarButtonItem(title: NSLocalizedString("Fertig", comment: ""), style: .done, target: self, action: #selector(dismissPopover))
+        navigationController.topViewController?.navigationItem.rightBarButtonItem = done
+        return navigationController
+    }
+    
+    @objc func dismissPopover() {
+        print("dismiss")
+        self.dismiss(animated: true, completion: nil)
+    }
+    
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -145,4 +179,56 @@ extension BluetoothTableViewController: BluFiManagerDelegate {
             print("Connected to network \(ssid)")
         }
     }
+}
+
+extension BluetoothTableViewController: QRScannerCodeDelegate {
+    
+    func qrScanner(_ controller: UIViewController, scanDidComplete result: String) {
+        if result.hasPrefix("WIFI:"),
+           let ssid = result.firstMatchFor(regex: "S:((?:\\\\;|[^;])*)"),
+           let password = result.firstMatchFor(regex: "P:((?:\\\\;|[^;])*)") {
+            Keychain.save(key: ssid.unescapeWifiQrCode(), passphrase: password.unescapeWifiQrCode())
+        }
+    }
+    
+    func qrScannerDidFail(_ controller: UIViewController, error: String) {
+        print("qrScannerDidFail")
+    }
+    
+    func qrScannerDidCancel(_ controller: UIViewController) {
+        print("qrScannerDidCancel")
+    }
+}
+
+extension UIImage {
+    func scale(to newSize: CGSize) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
+        self.draw(in: CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height))
+        let newImage: UIImage = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        return newImage
+    }
+}
+
+extension String {
+
+    func firstMatchFor(regex: String) -> String? {
+        if let regex = try? NSRegularExpression(pattern: regex, options: []) {
+            let nsString = self as NSString
+            if let result = regex.firstMatch(in: self, range: NSMakeRange(0, self.count)) {
+                return nsString.substring(with: result.range(at: 1))
+            }
+        } else {
+            print("invalid regex: \(regex)")
+        }
+        return nil
+    }
+    
+    func unescapeWifiQrCode() -> String {
+        var result = self.replacingOccurrences(of: #"\;"#, with: #";"#)
+        result = result.replacingOccurrences(of: #"\:"#, with: #":"#)
+        result = result.replacingOccurrences(of: #"\\"#, with: #"\"#)
+        return result
+    }
+
 }
