@@ -161,7 +161,7 @@ extension BluetoothTableViewController: BluFiManagerDelegate {
             
             // FIXME: don't push another WifiTableViewController if already displayed
             if type(of: self.navigationController?.visibleViewController) == WifiTableViewController.self{
-                    print("Already presentingXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+                    print("Already presenting")
             }
             
             SwiftSpinner.hide()
@@ -176,6 +176,8 @@ extension BluetoothTableViewController: BluFiManagerDelegate {
     func didReceiveInfo(_ manager: BluFiManager, deviceInfo: BluFiDeviceInfo) {
         if deviceInfo.opmode == 1, deviceInfo.sta == 0, let ssid = deviceInfo.ssid {
             print("Connected to network \(ssid)")
+            // FIXME: Stop configuring here
+            SwiftSpinner.hide()
         }
     }
 
