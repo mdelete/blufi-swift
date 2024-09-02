@@ -167,7 +167,7 @@ public class QRCodeScannerController: UIViewController, AVCaptureMetadataOutputO
     
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
+        //UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
         delCnt = 0
         prepareQRScannerView(self.view)
         startScanningQRCode()
@@ -325,7 +325,10 @@ public class QRCodeScannerController: UIViewController, AVCaptureMetadataOutputO
     
     open func startScanningQRCode() {
         if captureSession.isRunning { return }
-        captureSession.startRunning()
+        //captureSession.startRunning()
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            self?.captureSession.startRunning()
+        }
     }
     
     private func setupCaptureSession(_ devicePostion: AVCaptureDevice.Position) {
