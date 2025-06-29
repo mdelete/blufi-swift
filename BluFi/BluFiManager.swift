@@ -542,7 +542,7 @@ extension BluFiManager {
     
     fileprivate func writeConnectAP() {
         
-        var packet = [UInt8](repeating: 0, count: 3)
+        var packet = [UInt8](repeating: 0, count: 4)
         
         packet[0] = (0x03<<2) | 0x00
         packet[1] = 0x00
@@ -555,7 +555,7 @@ extension BluFiManager {
     
     public func writeDisconnectAP() {
         
-        var packet = [UInt8](repeating: 0, count: 3)
+        var packet = [UInt8](repeating: 0, count: 4)
         
         packet[0] = (0x04<<2) | 0x00
         packet[1] = 0x00
@@ -722,7 +722,7 @@ extension BluFiManager {
     }
     
     public func triggerDeviceInfo() {
-        var packet = [UInt8](repeating: 0, count: 3)
+        var packet = [UInt8](repeating: 0, count: 5)
         packet[0] = (0x05 << 2) | 0x00
         if self.aes != nil {
             packet[1] = 0x01
@@ -737,7 +737,7 @@ extension BluFiManager {
     }
     
     public func triggerWifiList() {
-        var packet = [UInt8](repeating: 0, count: 3)
+        var packet = [UInt8](repeating: 0, count: 4)
         packet[0] = (0x09 << 2) | 0x00
         if self.aes != nil {
             packet[1] = 0x01
